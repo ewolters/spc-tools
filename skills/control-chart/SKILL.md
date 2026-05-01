@@ -61,11 +61,11 @@ violations = check_nelson_rules(result)
 
 # Visualize
 spec = control_chart(
-    data_points=result.x_chart.data_points,
-    ucl=result.x_chart.ucl,
-    cl=result.x_chart.cl,
-    lcl=result.x_chart.lcl,
-    ooc_indices=result.x_chart.ooc_indices,
+    data_points=result.data_points,
+    ucl=result.limits.ucl,
+    cl=result.limits.cl,
+    lcl=result.limits.lcl,
+    ooc_indices=result.out_of_control,
     title="I-MR Chart"
 )
 

@@ -17,13 +17,23 @@ from forgespc.conformal import conformal_control
 ### Control Charts
 
 ```python
+# All chart functions return ControlChartResult:
+#   result.chart_type: str
+#   result.data_points: list[float]
+#   result.limits: ControlLimits (ucl, cl, lcl, usl?, lsl?)
+#   result.out_of_control: list[dict]  # [{index, value, reason}]
+#   result.run_violations: list[dict]  # [{rule, indices, description}]
+#   result.in_control: bool
+#   result.summary: str
+#   result.secondary_chart: ControlChartResult | None  # R or S chart for X-bar
+
 # I-MR (individuals & moving range)
 result = individuals_moving_range_chart(data)
-# result.x_chart: ControlChartResult (data_points, ucl, cl, lcl, ooc_indices)
-# result.mr_chart: ControlChartResult
+# result.secondary_chart has the MR chart
 
 # X-bar/R (subgroup data)
 result = xbar_r_chart(subgroups)  # list of lists
+# result.secondary_chart has the R chart
 
 # Attribute charts
 from forgespc.charts import p_chart, c_chart, u_chart, np_chart
@@ -284,11 +294,11 @@ violations = check_nelson_rules(chart_result)
 
 # 2. Visualize
 chart_spec = control_chart(
-    data_points=chart_result.x_chart.data_points,
-    ucl=chart_result.x_chart.ucl,
-    cl=chart_result.x_chart.cl,
-    lcl=chart_result.x_chart.lcl,
-    ooc_indices=chart_result.x_chart.ooc_indices,
+    data_points=chart_result.data_points,
+    ucl=chart_result.limits.ucl,
+    cl=chart_result.limits.cl,
+    lcl=chart_result.limits.lcl,
+    ooc_indices=[p["index"] for p in chart_result.out_of_control],
     title="I-MR Chart"
 )
 cap_spec = capability_histogram(
