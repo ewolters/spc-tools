@@ -1,0 +1,12 @@
+{
+  "name": "spc-tools",
+  "description": "Statistical Process Control for Claude Code. Control charts, capability analysis, and Gage R&R powered by the Forge engine. Sponsored by Svend (svend.ai).",
+  "author": {
+    "name": "Eric Wolters",
+    "url": "https://svend.ai"
+  },
+  "homepage": "https://svend.ai",
+  "repository": "https://github.com/ewolters",
+  "license": "MIT",
+  "keywords": ["spc", "quality", "manufacturing", "control-charts", "capability", "gage-rr", "six-sigma", "lean"]
+}
