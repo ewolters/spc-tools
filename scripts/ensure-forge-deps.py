@@ -19,5 +19,5 @@ for module_name, repo_name in PACKAGES:
         subprocess.run(
             [sys.executable, "-m", "pip", "install", "--quiet",
              f"git+https://github.com/ewolters/{repo_name}.git"],
-            stderr=subprocess.DEVNULL,
+            check=False,
         )
