@@ -44,29 +44,33 @@ Data can be provided as lists, CSV, or a structured table.
 
 ```python
 from forgespc.gage import gage_rr_crossed  # or gage_rr_nested
-from forgeviz.charts.gage import gage_rr_components, gage_by_part_operator
+from forgeviz.charts.gage import gage_rr_components, gage_rr_by_part, gage_rr_by_operator
 from forgeviz import render
 
-grr = gage_rr_crossed(measurements, parts, operators)
+# Note: argument order is parts, operators, measurements
+grr = gage_rr_crossed(parts, operators, measurements)
+# Optional: grr = gage_rr_crossed(parts, operators, measurements, tolerance=0.5)
 
 # Visualization
 comp_spec = gage_rr_components(grr, title="Gage R&R Components")
-po_spec = gage_by_part_operator(grr, title="By Part × Operator")
+part_spec = gage_rr_by_part(grr, title="By Part")
+oper_spec = gage_rr_by_operator(grr, title="By Operator")
 
 print(render(comp_spec, format="json"))
-print(render(po_spec, format="json"))
+print(render(part_spec, format="json"))
 ```
 
 ## Step 5: Interpret Results
 
 | Component | %Study Var | %Tolerance |
 |-----------|-----------|------------|
-| Total Gage R&R | {grr.total_grr} | {grr.percent_tolerance} |
-| Repeatability | {grr.repeatability} | — |
-| Reproducibility | {grr.reproducibility} | — |
-| Part-to-Part | {grr.part_to_part} | — |
+| Total Gage R&R | {grr.grr_percent}% | {grr.pct_tolerance.get("GRR", "N/A")} |
+| Repeatability | {grr.pct_study_var["Repeatability"]}% | — |
+| Reproducibility | {grr.pct_study_var["Reproducibility"]}% | — |
+| Part-to-Part | {grr.pct_study_var["Part-to-Part"]}% | — |
 
 **Number of Distinct Categories (ndc):** {grr.ndc}
+**Assessment:** {grr.assessment}
 
 ### Acceptance Criteria (AIAG)
 

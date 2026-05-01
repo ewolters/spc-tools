@@ -45,44 +45,63 @@ result = p_chart(defective_counts, sample_sizes)
 ```python
 cap = calculate_capability(data, usl=25.05, lsl=24.95)
 # cap.cp, cap.cpk, cap.pp, cap.ppk
+# cap.cpl, cap.cpu (one-sided)
 # cap.sigma_level, cap.dpmo, cap.yield_percent
-# cap.within_sigma, cap.overall_sigma
+# cap.sigma_within, cap.sigma_overall
+# cap.interpretation — human-readable assessment
 ```
 
 ### Nelson & Western Electric Rules
 
 ```python
-violations = check_nelson_rules(chart_result)
-# List of {rule: int, indices: [int], description: str}
+# check_nelson_rules takes raw data, center, and sigma — NOT a ControlChartResult
+sigma = (result.limits.ucl - result.limits.cl) / 3
+violations = check_nelson_rules(result.data_points, result.limits.cl, sigma)
+# Returns: list of {rule: int, indices: [int], description: str}
+
+# Note: result.run_violations already contains Western Electric rule results
+# from the chart computation — check that first before calling check_nelson_rules
 ```
 
 ### Advanced Charts
 
 ```python
 cusum = cusum_chart(data, target=50.0, h=5.0, k=0.5)
-ewma = ewma_chart(data, lambda_=0.2, L=3.0)
+ewma = ewma_chart(data, lambda_param=0.2, L=3.0)  # NOT lambda_
 xbar_s = xbar_s_chart(subgroups)
 ```
 
 ### Gage R&R
 
 ```python
-# Crossed design (most common)
-grr = gage_rr_crossed(measurements, parts, operators)
-# grr.repeatability, grr.reproducibility, grr.part_to_part
-# grr.total_grr, grr.ndc (number of distinct categories)
-# grr.percent_tolerance, grr.percent_study_var
+# Crossed design — argument order: parts, operators, measurements
+grr = gage_rr_crossed(parts, operators, measurements)
+grr = gage_rr_crossed(parts, operators, measurements, tolerance=0.5)
 
-# Nested design
-grr = gage_rr_nested(measurements, parts, operators)
+# Key attributes:
+# grr.grr_percent — headline %Study Var for total GRR
+# grr.ndc — number of distinct categories
+# grr.assessment — "Acceptable" / "Marginal" / "Unacceptable"
+# grr.var_repeatability, grr.var_reproducibility, grr.var_part, grr.var_total
+# grr.pct_study_var — dict: {"Repeatability": %, "Reproducibility": %, ...}
+# grr.pct_tolerance — dict (only if tolerance provided)
+# grr.pct_contribution — dict: variance % by source
+# grr.anova_table — list of ANOVA rows
+
+# Nested design — same argument order
+grr = gage_rr_nested(parts, operators, measurements)
 ```
 
 ### Bayesian SPC
 
 ```python
 bcap = bayesian_capability(data, usl=53.0, lsl=47.0)
-# bcap.cpk_mean, bcap.cpk_credible_interval
-# bcap.probability_capable (P(Cpk > 1.33))
+# bcap.cpk_median — posterior median Cpk
+# bcap.cpk_ci — 95% credible interval (tuple)
+# bcap.p_gt_133 — P(Cpk > 1.33)
+# bcap.p_gt_167 — P(Cpk > 1.67)
+# bcap.verdict — human-readable assessment
+# bcap.sigma_level, bcap.dpmo, bcap.yield_pct
 
 bcc = bayesian_control_chart(data)
 # Posterior-based control limits
@@ -160,7 +179,7 @@ from forgeviz.charts.generic import bar, line, scatter, histogram, box_plot
 from forgeviz.charts.distribution import histogram_normal_overlay
 from forgeviz.charts.effects import main_effects, interaction_plot, pareto_of_effects
 from forgeviz.charts.diagnostic import residual_plots, qq_plot, four_in_one
-from forgeviz.charts.gage import gage_rr_components, gage_by_part_operator
+from forgeviz.charts.gage import gage_rr_components, gage_rr_by_part, gage_rr_by_operator, gage_xbar_r
 from forgeviz.charts.scatter import scatter_regression, pareto_chart
 from forgeviz.charts.reliability import survival_plot, weibull_plot
 from forgeviz.charts.bayesian import bayesian_control, bayesian_capability_plot

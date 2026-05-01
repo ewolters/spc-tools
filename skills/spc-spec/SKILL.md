@@ -1,4 +1,5 @@
 ---
+name: spc-spec
 description: >-
   Forge quality engineering toolkit reference. Use when working with
   statistical process control, control charts, capability analysis,

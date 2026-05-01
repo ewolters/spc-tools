@@ -6,7 +6,7 @@
     "url": "https://svend.ai"
   },
   "homepage": "https://svend.ai/plugins/spc-tools/",
-  "repository": "https://github.com/ewolters",
+  "repository": "https://github.com/ewolters/spc-tools",
   "license": "Apache-2.0",
   "keywords": ["spc", "quality", "manufacturing", "control-charts", "capability", "gage-rr", "six-sigma", "lean"]
 }

@@ -50,14 +50,18 @@ Ask the user for data or read from a file. Data can be:
 
 ```python
 from forgespc.charts import individuals_moving_range_chart, xbar_r_chart
-from forgespc.rules import check_nelson_rules
 from forgeviz.charts.control import control_chart
 from forgeviz import render
 
 # Compute
 data = [...]  # user's data
 result = individuals_moving_range_chart(data)
-violations = check_nelson_rules(result)
+
+# Run violations are already in result.run_violations
+# For Nelson rules on raw data:
+#   from forgespc.rules import check_nelson_rules
+#   sigma = (result.limits.ucl - result.limits.cl) / 3
+#   violations = check_nelson_rules(result.data_points, result.limits.cl, sigma)
 
 # Visualize
 spec = control_chart(
@@ -65,12 +69,15 @@ spec = control_chart(
     ucl=result.limits.ucl,
     cl=result.limits.cl,
     lcl=result.limits.lcl,
-    ooc_indices=result.out_of_control,
+    ooc_indices=[p["index"] for p in result.out_of_control],
     title="I-MR Chart"
 )
 
 # Output as JSON for rendering
 print(render(spec, format="json"))
+
+# For X-bar/R, the R chart is in result.secondary_chart
+# Render it the same way with result.secondary_chart.limits.*
 ```
 
 ## Step 5: Interpret Results

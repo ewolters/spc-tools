@@ -55,9 +55,12 @@ print(render(spec, format="json"))
 from forgespc.bayesian import bayesian_capability
 
 bcap = bayesian_capability(data, usl=USL, lsl=LSL)
-# bcap.cpk_mean — posterior mean Cpk
-# bcap.cpk_credible_interval — 95% credible interval
-# bcap.probability_capable — P(Cpk > 1.33)
+# bcap.cpk_median — posterior median Cpk
+# bcap.cpk_ci — 95% credible interval (tuple)
+# bcap.p_gt_133 — P(Cpk > 1.33)
+# bcap.p_gt_167 — P(Cpk > 1.67)
+# bcap.verdict — human-readable assessment
+# bcap.sigma_level, bcap.dpmo, bcap.yield_pct
 ```
 
 ## Step 4: Interpret Results
